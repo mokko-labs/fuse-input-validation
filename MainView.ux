@@ -1,0 +1,50 @@
+<App>
+  <Page>
+    <StackPanel Padding="20" Color="#ddd" ItemSpacing="10">
+
+        <JavaScript>
+            var Observable = require('FuseJS/Observable');
+
+            var formIsValid = Observable(false);
+
+            var text1valid = Observable(false);
+            var text2valid = Observable(false);
+            var text3valid = Observable(false);
+
+            text1valid.onValueChanged(arg => {
+                formIsValid.value = text1valid.value && text2valid.value && text3valid.value;
+            });
+            text2valid.onValueChanged(arg => {
+                formIsValid.value = text1valid.value && text2valid.value && text3valid.value;
+            });
+            text3valid.onValueChanged(arg => {
+                formIsValid.value = text1valid.value && text2valid.value && text3valid.value;
+            });
+
+            module.exports = {
+                formIsValid: formIsValid,
+                text1valid: text1valid,
+                text2valid: text2valid,
+                text3valid: text3valid
+            }
+
+        </JavaScript>
+
+
+        <Text Value="Required Field" />
+    <ValidatedTextInput ux:Name="TestInput" Required="true" IsValid="{text1valid}">
+    </ValidatedTextInput>
+    <Text Value="Required Field, Minimum Length 6" />
+    <ValidatedTextInput ux:Name="TestInput2" Required="true" MinLength="6" IsValid="{text2valid}" />
+    <Text Value="Optional Field" />
+    <ValidatedTextInput ux:Name="TestInput3" Required="false" IsValid="{text3valid}"/>
+
+          <Button Alignment="Center" ux:Name="SubmitButton" Margin="10" IsEnabled="{formIsValid}">
+              <Text Alignment="Center">Submit</Text>
+              <WhileDisabled>
+                  <Change SubmitButton.Opacity="0.4" />
+              </WhileDisabled>
+          </Button>
+    </StackPanel>
+  </Page>
+</App>

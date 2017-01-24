@@ -1,0 +1,74 @@
+<TextInput Value="{Property Text}" ux:Class="ValidatedTextInput" Padding="10" BorderColor="#000" Error="Empty" Margin="2" Required="false" IsUntouched="true" ShouldShowError="false" MinLength="1" ErrorBorderColor="#f00" ValidationMethod="normal">
+
+    <bool ux:Property="Required" />
+    <bool ux:Property="IsValid" />
+    <bool ux:Property="IsUntouched" />
+    <string ux:Property="ValidationMethod" />
+
+    <float ux:Property="MinLength" />
+    <string ux:Property="Error" />
+    <string ux:Property="Text" />
+
+    <!-- Controls internal display -->
+    <float4 ux:Property="ErrorBorderColor" />
+    <float4 ux:Property="BorderColor" />
+    <bool ux:Property="ShouldShowError" />
+
+    <JavaScript>
+
+
+    function doValidation(obj, text) {
+
+        if(!obj.Required.value) {
+            obj.IsValid.value = true;
+            obj.Error.value = null;
+            obj.ShouldShowError.value = false;
+
+            return;
+        }
+
+        if(obj.IsUntouched.value == true) {
+            obj.Error.value = null;
+            obj.ShouldShowError.value = false;
+
+            return;
+        }
+
+          if(text && text.length && text.length >= obj.MinLength.value) {
+                obj.IsValid.value = true;
+                obj.Error.value = null;
+                obj.ShouldShowError.value = false;
+            } else {
+                obj.IsValid.value = false;
+                obj.Error.value = "String is empty.";
+                obj.ShouldShowError.value = true;
+              }
+
+    }
+
+      this.Required.onValueChanged(arg => {
+          doValidation(this, this.Text.value);
+      });
+
+      this.Text.onValueChanged(arg => {
+          this.IsUntouched.value = false;
+          doValidation(this, arg);
+      });
+
+      function setUntouched() {
+          this.IsUntouched.value = true;
+          this.ShouldShowError.value = false;
+      }
+
+      module.exports = {
+          setUntouched: setUntouched,
+      }
+
+    </JavaScript>
+  <WhileTrue Value="{Property ShouldShowError}">
+      <Change this.BorderColor="{ReadProperty ErrorBorderColor}" />
+  </WhileTrue>
+    <Rectangle Layer="Background" CornerRadius="4">
+      <Stroke Color="{Property BorderColor}" Width="2" ux:Name="Border" />
+    </Rectangle>
+</TextInput>
